@@ -1,22 +1,25 @@
 // ============================================
-// PASTE URL DEPLOYMENT BARU DI SINI
-const scriptURL = 'https://script.google.com/macros/s/AKfycbxKF4E5RfHMXDEZMWm-oG2lNu65SU9g8aFBMSLxoTQrvkultfpl5-2rAQdp-jH-dhd5Ig/exec'; 
+// 👇 TEMPEL URL DARI GOOGLE APPS SCRIPT DI SINI 👇
+const scriptURL = 'https://script.google.com/macros/s/AKfycbz8eP30Uy6_HhF5G15MKxzzMHcJLTUwQi1Tr6EeT6rP5TeUoSDEgid4kmQ6j0W9E-oMiw/exec'; 
 // ============================================
 
 const form = document.getElementById('formSiswa');
 const btnKirim = document.getElementById('btnKirim');
 const btnDelete = document.getElementById('btnDelete');
 
-// 1. FUNGSI LOAD DATA (MENAMPILKAN DATA DI UI)
+// 1. FUNGSI LOAD DATA (KOLOM A - M)
 function loadDataSiswa() {
     const tbody = document.getElementById('tableBody');
     const spinner = document.getElementById('loadingSpinner');
-    const tableEl = document.getElementById('tabelSiswa');
-
-    // Tampilkan spinner, sembunyikan tabel dulu
+    
     spinner.style.display = 'block';
     
-    // Kirim permintaan 'read_data' ke Google Script
+    // Reset DataTable agar tidak error saat reload
+    if ($.fn.DataTable.isDataTable('#tabelSiswa')) {
+        $('#tabelSiswa').DataTable().destroy();
+    }
+    tbody.innerHTML = "";
+
     fetch(scriptURL, {
         method: 'POST',
         body: JSON.stringify({ action: "read_data" })
@@ -27,35 +30,36 @@ function loadDataSiswa() {
             const data = result.data;
             let html = "";
             
-            // Loop data dari server (Kolom: 0=No, 1=Nama, 2=NIS, 3=NISN, 5=Lahir, 6=Agama, 8=Kontak)
             data.forEach((row, index) => {
+                // row[1] = Nama, row[2] = NIS ... row[12] = Pek. Ibu
                 html += `
                 <tr>
-                    <td>${index + 1}</td>
-                    <td class="fw-bold">${row[1]}</td>
-                    <td><span class="badge bg-primary">${row[2]}</span></td>
-                    <td>${row[3]}</td>
-                    <td>${row[4]}, ${formatTanggal(row[5])}</td>
+                    <td class="text-center">${index + 1}</td>
+                    <td class="fw-bold text-nowrap">${row[1]}</td>
+                    <td class="text-center"><span class="badge bg-primary">${row[2]}</span></td>
+                    <td class="text-center">${row[3]}</td>
+                    <td style="min-width: 180px;">${row[4]}, ${formatTanggal(row[5])}</td>
                     <td>${row[6]}</td>
+                    <td style="min-width: 200px;">${row[7]}</td>
                     <td>${row[8]}</td>
+                    <td>${row[9]}</td>
+                    <td>${row[10]}</td>
+                    <td>${row[11]}</td>
+                    <td>${row[12]}</td>
                 </tr>`;
             });
-
-            // Hancurkan datatable lama jika ada (biar gak error saat reload)
-            if ($.fn.DataTable.isDataTable('#tabelSiswa')) {
-                $('#tabelSiswa').DataTable().destroy();
-            }
 
             tbody.innerHTML = html;
             spinner.style.display = 'none';
 
-            // Aktifkan fitur canggih DataTables (Search, Sort, Pagination)
+            // Aktifkan DataTable dengan Scroll ke Samping
             $('#tabelSiswa').DataTable({
+                scrollX: true, 
                 language: {
-                    search: "Cari Siswa:",
-                    lengthMenu: "Tampil _MENU_ data",
-                    info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ siswa",
-                    paginate: { first: "Aw", last: "Ak", next: ">", previous: "<" }
+                    search: "Cari:",
+                    lengthMenu: "Tampil _MENU_",
+                    info: "_START_ - _END_ dari _TOTAL_",
+                    paginate: { first: "<<", last: ">>", next: ">", previous: "<" }
                 }
             });
 
@@ -65,7 +69,7 @@ function loadDataSiswa() {
     })
     .catch(error => {
         spinner.style.display = 'none';
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Gagal memuat data: ${error.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="12" class="text-center text-danger">Gagal memuat data: ${error.message}</td></tr>`;
     });
 }
 
@@ -75,32 +79,7 @@ function formatTanggal(dateString) {
     return isNaN(date) ? dateString : date.toLocaleDateString('id-ID');
 }
 
-// 2. LOGIKA INPUT MANUAL
-if(form) {
-    form.addEventListener('submit', e => {
-        e.preventDefault();
-        btnKirim.innerHTML = 'Sedang Menyimpan...';
-        btnKirim.disabled = true;
-        
-        const data = new FormData(form);
-        fetch(scriptURL, { method: 'POST', body: data })
-            .then(res => res.json())
-            .then(res => {
-                if(res.result === 'success') {
-                    Swal.fire('Berhasil', 'Siswa tersimpan.', 'success');
-                    form.reset();
-                    // Jika sedang di tab view, refresh data
-                    if(document.getElementById('pills-view-tab').classList.contains('active')){
-                        loadDataSiswa(); 
-                    }
-                } else throw new Error(res.error);
-            })
-            .catch(err => Swal.fire('Gagal', err.message, 'error'))
-            .finally(() => { btnKirim.innerHTML = 'SIMPAN DATA'; btnKirim.disabled = false; });
-    });
-}
-
-// 3. LOGIKA UPLOAD
+// 2. LOGIKA UPLOAD (AUTO DETECT FORMAT INDONESIA)
 function handleFileUpload() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -110,6 +89,7 @@ function handleFileUpload() {
     reader.onload = function(e) {
         const text = e.target.result;
         const rows = text.split("\n");
+        // Deteksi pemisah (Koma atau Titik Koma)
         let pemisah = rows[0] && rows[0].includes(";") ? ";" : ",";
 
         let dataSiswa = [];
@@ -117,11 +97,14 @@ function handleFileUpload() {
             const cleanRow = rows[i].replace(/\r/g, "").trim();
             if (cleanRow) {
                 const cols = cleanRow.split(pemisah);
-                if (cols.length > 3 && cols[1]) dataSiswa.push(cols);
+                // Validasi minimal ada Nama (index 1)
+                if (cols.length > 3 && cols[1]) {
+                    dataSiswa.push(cols);
+                }
             }
         }
 
-        if (dataSiswa.length === 0) { Swal.fire('Gagal', 'File kosong.', 'error'); return; }
+        if (dataSiswa.length === 0) { Swal.fire('Gagal', 'File kosong atau format salah.', 'error'); return; }
 
         Swal.fire({ title: 'Mengupload...', didOpen: () => Swal.showLoading() });
 
@@ -132,8 +115,10 @@ function handleFileUpload() {
         .then(res => res.json())
         .then(res => {
             if(res.result === 'success') {
-                Swal.fire('Sukses', res.count + ' data masuk!', 'success');
+                Swal.fire('Sukses', res.count + ' data berhasil masuk!', 'success');
                 fileInput.value = "";
+                // Jika sedang di tab database, refresh
+                if(document.getElementById('pills-view-tab').classList.contains('active')) loadDataSiswa();
             } else throw new Error(res.error);
         })
         .catch(err => Swal.fire('Error', err.message, 'error'));
@@ -141,13 +126,33 @@ function handleFileUpload() {
     reader.readAsText(file);
 }
 
-// 4. LOGIKA HAPUS
+// 3. LOGIKA INPUT MANUAL
+if(form) {
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        btnKirim.innerHTML = 'Sedang Menyimpan...'; btnKirim.disabled = true;
+        const data = new FormData(form);
+        fetch(scriptURL, { method: 'POST', body: data })
+            .then(res => res.json())
+            .then(res => {
+                if(res.result === 'success') {
+                    Swal.fire('Berhasil', 'Data tersimpan.', 'success');
+                    form.reset();
+                    if(document.getElementById('pills-view-tab').classList.contains('active')) loadDataSiswa();
+                } else throw new Error(res.error);
+            })
+            .catch(err => Swal.fire('Gagal', err.message, 'error'))
+            .finally(() => { btnKirim.innerHTML = 'SIMPAN DATA'; btnKirim.disabled = false; });
+    });
+}
+
+// 4. LOGIKA HAPUS DATA
 function handleDelete() {
     const nis = document.getElementById('deleteNIS').value;
     if (!nis) { Swal.fire('Peringatan', 'Isi NIS dulu.', 'warning'); return; }
 
     Swal.fire({
-        title: 'Hapus Data?', text: "NIS " + nis + " akan dihapus!", icon: 'warning',
+        title: 'Yakin Hapus?', text: "NIS " + nis + " akan dihapus permanen!", icon: 'warning',
         showCancelButton: true, confirmButtonColor: '#d33', confirmButtonText: 'Ya, Hapus'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -161,7 +166,7 @@ function handleDelete() {
                 if(res.result === 'success') {
                     Swal.fire('Terhapus!', 'Siswa ' + res.nama + ' dihapus.', 'success');
                     document.getElementById('deleteNIS').value = "";
-                    loadDataSiswa(); // Refresh tabel
+                    loadDataSiswa(); 
                 } else if(res.result === 'not_found') {
                     Swal.fire('Gagal', 'NIS tidak ditemukan.', 'error');
                 } else throw new Error(res.error);
@@ -173,6 +178,7 @@ function handleDelete() {
 }
 
 function downloadTemplate() {
+    // Template pakai Titik Koma (;) agar aman di Excel Indonesia
     const headers = ["No","Nama Siswa","NIS","NISN","Tempat Lahir","Tanggal Lahir","Agama","Alamat","Nomor Kontak","Nama Ayah","Nama Ibu","Pekerjaan Ayah","Pekerjaan Ibu"];
     let csv = "data:text/csv;charset=utf-8," + headers.join(";") + "\n";
     const link = document.createElement("a");

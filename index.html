@@ -6,8 +6,8 @@
     <title>Sistem Data Siswa XIIMPLB</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -46,7 +46,7 @@
                     </div>
                     <div>
                         <h5 class="fw-bold text-primary mb-0">Upload File CSV</h5>
-                        <small class="text-muted">Otomatis deteksi format Excel Indonesia</small>
+                        <small class="text-muted">Mendukung format Excel Indonesia (Titik Koma)</small>
                     </div>
                 </div>
                 <div class="row g-2">
@@ -85,6 +85,96 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" name="tempat_lahir" placeholder="Tempat Lahir">
+                                <label>Tempat Lahir</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" name="tanggal_lahir">
+                                <label>Tanggal Lahir</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <select class="form-select" name="agama" required>
+                                    <option value="" disabled selected>Pilih Agama</option>
+                                    <option>Islam</option>
+                                    <option>Kristen</option>
+                                    <option>Katolik</option>
+                                    <option>Hindu</option>
+                                    <option>Budha</option>
+                                    <option>Konghucu</option>
+                                    <option>Aliran Kepercayaan</option>
+                                </select>
+                                <label>Agama</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <textarea class="form-control" name="alamat" style="height: 100px" placeholder="Alamat"></textarea>
+                        <label>Alamat Lengkap</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" name="no_kontak" placeholder="HP">
+                        <label>Nomor Kontak (WA/HP)</label>
+                    </div>
+
+                    <hr>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" name="nama_ayah" placeholder="Ayah">
+                                <label>Nama Ayah</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" name="pek_ayah">
+                                    <option value="" selected>-- Pekerjaan Ayah --</option>
+                                    <option>PNS</option>
+                                    <option>TNI/Polri</option>
+                                    <option>Petani</option>
+                                    <option>Nelayan</option>
+                                    <option>Wiraswasta</option>
+                                    <option>Buruh</option>
+                                    <option>Lainnya</option>
+                                </select>
+                                <label>Pekerjaan Ayah</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" name="nama_ibu" placeholder="Ibu">
+                                <label>Nama Ibu</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" name="pek_ibu">
+                                    <option value="" selected>-- Pekerjaan Ibu --</option>
+                                    <option>PNS</option>
+                                    <option>TNI/Polri</option>
+                                    <option>Petani</option>
+                                    <option>Nelayan</option>
+                                    <option>Wiraswasta</option>
+                                    <option>Ibu Rumah Tangga</option>
+                                    <option>Lainnya</option>
+                                </select>
+                                <label>Pekerjaan Ibu</label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="d-grid mt-3">
                         <button type="submit" class="btn btn-gradient-primary py-3" id="btnKirim">SIMPAN DATA</button>
                     </div>
@@ -95,32 +185,38 @@
         <div class="tab-pane fade" id="pills-view">
             <div class="glass-card p-4 animate-enter delay-2">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold text-primary mb-0"><i class="bi bi-people-fill me-2"></i>Data Siswa Terdaftar</h5>
+                    <h5 class="fw-bold text-primary mb-0"><i class="bi bi-people-fill me-2"></i>Database Siswa Lengkap</h5>
                     <button class="btn btn-sm btn-outline-primary" onclick="loadDataSiswa()">
-                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh Data
+                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
                     </button>
                 </div>
                 
                 <div class="table-responsive">
-                    <table id="tabelSiswa" class="table table-hover table-striped w-100">
-                        <thead class="table-primary">
+                    <table id="tabelSiswa" class="table table-hover table-striped align-middle" style="min-width: 1800px; width: 100%;">
+                        <thead class="table-primary text-center">
                             <tr>
                                 <th>No</th>
                                 <th>Nama Siswa</th>
                                 <th>NIS</th>
                                 <th>NISN</th>
-                                <th>Lahir</th>
+                                <th>TTL</th>
                                 <th>Agama</th>
+                                <th>Alamat</th>
                                 <th>Kontak</th>
+                                <th>Ayah</th>
+                                <th>Ibu</th>
+                                <th>Pek. Ayah</th>
+                                <th>Pek. Ibu</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
                             </tbody>
                     </table>
                 </div>
+                
                 <div id="loadingSpinner" class="text-center py-5">
                     <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-2 text-muted">Sedang mengambil data dari server...</p>
+                    <p class="mt-2 text-muted">Sedang mengambil data...</p>
                 </div>
             </div>
         </div>
