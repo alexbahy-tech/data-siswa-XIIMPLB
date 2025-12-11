@@ -1,153 +1,100 @@
-// ============================================================
-// KONFIGURASI PENTING
-// ============================================================
-// Tempel URL Web App Google Script Bapak di sini:
-const scriptURL = 'https://script.google.com/macros/s/AKfycbzzzSAsovJ_5SXoxq6Uk870RMBNLj0QPJrkzvXjQQncZ86wD-KlsHzzK4sjrJKVwbx5dw/exec'; 
-// ============================================================
-
+// Ganti URL ini dengan URL Web App punya Bapak
+const scriptURL = 'https://script.google.com/macros/s/AKfycbxnea_Npfl_xqAIwzaU6DZBTRVoyhJ1hetRdvvlH-6tr7TwZ_r7oOQkPSrTuNnrV1ssLw/exec'; 
 
 const form = document.forms['submit-to-google-sheet'];
 const btnKirim = document.getElementById('btnKirim');
 
-// ------------------------------------------------------------
-// 1. LOGIKA INPUT MANUAL (TETAP SAMA)
-// ------------------------------------------------------------
+// --- 1. LOGIKA INPUT MANUAL ---
 form.addEventListener('submit', e => {
     e.preventDefault();
-    
-    // Validasi URL dulu
-    if (scriptURL.includes('TEMPEL_URL')) {
-        Swal.fire('Error', 'Pak Wakasek, URL Google Script belum dipasang di script.js', 'error');
-        return;
-    }
-
-    const textAsli = btnKirim.innerHTML;
-    btnKirim.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+    btnKirim.innerHTML = 'Menyimpan...';
     btnKirim.disabled = true;
-
-    const data = new FormData(form);
-    
-    fetch(scriptURL, { method: 'POST', body: data })
+    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
         .then(response => response.json())
         .then(result => {
             if(result.result === 'success') {
-                Swal.fire('Berhasil!', 'Data siswa ' + result.nama + ' tersimpan.', 'success');
+                Swal.fire('Berhasil!', 'Data tersimpan.', 'success');
                 form.reset();
             } else { throw new Error(result.error); }
-            btnKirim.innerHTML = textAsli;
+            btnKirim.innerHTML = 'SIMPAN DATA';
             btnKirim.disabled = false;
         })
         .catch(error => {
-            Swal.fire('Gagal!', 'Cek internet/URL. ' + error.message, 'error');
-            btnKirim.innerHTML = textAsli;
+            Swal.fire('Gagal!', error.message, 'error');
+            btnKirim.innerHTML = 'SIMPAN DATA';
             btnKirim.disabled = false;
         });
 });
 
-// ------------------------------------------------------------
-// 2. LOGIKA UPLOAD FILE (SUDAH DIPERBAIKI UNTUK EXCEL INDONESIA)
-// ------------------------------------------------------------
+// --- 2. LOGIKA UPLOAD (DENGAN AUTO-DETECT TITIK KOMA) ---
 function handleFileUpload() {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
 
-    // Validasi URL dulu
-    if (scriptURL.includes('TEMPEL_URL')) {
-        Swal.fire('Error', 'Pak Wakasek, URL Google Script belum dipasang di script.js', 'error');
-        return;
-    }
-
     if (!file) {
-        Swal.fire('Ups!', 'Pilih file CSV dulu ya pak.', 'warning');
+        Swal.fire('Ups!', 'Pilih file CSV dulu.', 'warning');
         return;
     }
 
     const reader = new FileReader();
-    
     reader.onload = function(e) {
         const text = e.target.result;
-        const rows = text.split("\n"); // Pisah per baris
+        const rows = text.split("\n");
         
-        // --- FITUR BARU: AUTO DETECT PEMISAH (KOMA ATAU TITIK KOMA) ---
-        // Kita cek baris pertama (Header). Jika ada ";", berarti format Indonesia.
-        let pemisah = ","; 
+        // DETEKSI APAKAH PAKAI TITIK KOMA (Format Indonesia)
+        let pemisah = ",";
         if (rows[0] && rows[0].includes(";")) {
             pemisah = ";";
         }
-        // --------------------------------------------------------------
 
         let dataSiswa = [];
-        
-        // Loop mulai index 1 (karena index 0 adalah Header Judul)
         for (let i = 1; i < rows.length; i++) {
-            // Bersihkan baris dari karakter aneh
-            const cleanRow = rows[i].replace(/\r/g, "").trim(); 
-            
+            const cleanRow = rows[i].replace(/\r/g, "").trim();
             if (cleanRow) {
-                // Pisahkan kolom menggunakan pemisah yang sudah dideteksi tadi
-                const cols = cleanRow.split(pemisah); 
-                
-                // Validasi: Pastikan baris punya cukup kolom & Nama (index 1) tidak kosong
-                // cols[1] adalah Nama Siswa
-                if (cols.length > 5 && cols[1] && cols[1].trim() !== "") { 
+                const cols = cleanRow.split(pemisah);
+                // Ambil data jika kolom Nama (index 1) ada isinya
+                if (cols.length > 5 && cols[1] && cols[1].trim() !== "") {
                     dataSiswa.push(cols);
                 }
             }
         }
 
         if (dataSiswa.length === 0) {
-            Swal.fire('Gagal Membaca', 'File kosong atau format salah. Pastikan Save As CSV.', 'error');
+            Swal.fire('Gagal', 'File kosong atau format salah.', 'error');
             return;
         }
 
-        // Tampilkan loading & Konfirmasi jumlah data
         Swal.fire({
             title: 'Sedang Upload...',
-            text: 'Mengirim ' + dataSiswa.length + ' data siswa...',
+            text: 'Mengirim ' + dataSiswa.length + ' data...',
             allowOutsideClick: false,
             didOpen: () => { Swal.showLoading() }
         });
 
-        const payload = JSON.stringify({
-            action: "bulk_upload",
-            data: dataSiswa
-        });
-
         fetch(scriptURL, { 
             method: 'POST', 
-            body: payload 
+            body: JSON.stringify({ action: "bulk_upload", data: dataSiswa }) 
         })
         .then(response => response.json())
         .then(result => {
             if(result.result === 'success') {
-                Swal.fire('Selesai!', result.count + ' data siswa berhasil masuk Database!', 'success');
-                fileInput.value = ""; // Reset input file
-            } else {
-                throw new Error(result.error);
-            }
+                Swal.fire('Sukses!', result.count + ' data berhasil masuk!', 'success');
+                fileInput.value = "";
+            } else { throw new Error(result.error); }
         })
-        .catch(error => {
-            Swal.fire('Error Upload', error.message, 'error');
-        });
+        .catch(error => { Swal.fire('Error', error.message, 'error'); });
     };
-
     reader.readAsText(file);
 }
 
-// ------------------------------------------------------------
-// 3. DOWNLOAD TEMPLATE
-// ------------------------------------------------------------
+// --- 3. DOWNLOAD TEMPLATE (SESUAIKAN AGAR TITIK KOMA) ---
 function downloadTemplate() {
     const headers = [
         "No", "Nama Siswa", "NIS", "NISN", "Tempat Lahir", "Tanggal Lahir (YYYY-MM-DD)", 
         "Agama", "Alamat", "Nomor Kontak", "Nama Ayah", "Nama Ibu", "Pekerjaan Ayah", "Pekerjaan Ibu"
     ];
-    // Data dummy contoh
-    const dummy = ["1","Siswa Contoh","2401","00123","Ambon","2008-01-01","Islam","Jl. Baru","08123","Ayah","Ibu","Wiraswasta","IRT"];
-    
-    // Gabungkan dengan titik koma (;) agar aman dibuka di Excel Indonesia
-    let csv = "data:text/csv;charset=utf-8," + headers.join(";") + "\n" + dummy.join(";");
-    
+    // Gunakan titik koma (;) agar saat dibuka di Excel Bapak langsung rapi
+    let csv = "data:text/csv;charset=utf-8," + headers.join(";") + "\n";
     const encodedUri = encodeURI(csv);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
