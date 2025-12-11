@@ -29,11 +29,6 @@
                 <i class="bi bi-table me-2"></i>Database Kelas
             </button>
         </li>
-        <li class="nav-item">
-            <button class="nav-link rounded-pill fw-bold text-danger" id="pills-delete-tab" data-bs-toggle="pill" data-bs-target="#pills-delete" type="button">
-                <i class="bi bi-trash3-fill me-2"></i>Hapus Data
-            </button>
-        </li>
     </ul>
 
     <div class="tab-content" id="pills-tabContent">
@@ -46,7 +41,7 @@
                     </div>
                     <div>
                         <h5 class="fw-bold text-primary mb-0">Upload File CSV</h5>
-                        <small class="text-muted">Mendukung format Excel Indonesia (Titik Koma)</small>
+                        <small class="text-muted">Format Excel Indonesia (Titik Koma)</small>
                     </div>
                 </div>
                 <div class="row g-2">
@@ -87,92 +82,19 @@
                     </div>
                     
                     <div class="row g-3 mb-3">
-                        <div class="col-md-4">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" name="tempat_lahir" placeholder="Tempat Lahir">
-                                <label>Tempat Lahir</label>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-floating">
-                                <input type="date" class="form-control" name="tanggal_lahir">
-                                <label>Tanggal Lahir</label>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-floating">
-                                <select class="form-select" name="agama" required>
-                                    <option value="" disabled selected>Pilih Agama</option>
-                                    <option>Islam</option>
-                                    <option>Kristen</option>
-                                    <option>Katolik</option>
-                                    <option>Hindu</option>
-                                    <option>Budha</option>
-                                    <option>Konghucu</option>
-                                    <option>Aliran Kepercayaan</option>
-                                </select>
-                                <label>Agama</label>
-                            </div>
-                        </div>
+                        <div class="col-md-4"><div class="form-floating"><input type="text" class="form-control" name="tempat_lahir" placeholder="Tmp"><label>Tempat Lahir</label></div></div>
+                        <div class="col-md-4"><div class="form-floating"><input type="date" class="form-control" name="tanggal_lahir"><label>Tanggal Lahir</label></div></div>
+                        <div class="col-md-4"><div class="form-floating"><select class="form-select" name="agama"><option>Islam</option><option>Kristen</option><option>Katolik</option><option>Hindu</option><option>Budha</option><option>Konghucu</option></select><label>Agama</label></div></div>
                     </div>
-
-                    <div class="form-floating mb-3">
-                        <textarea class="form-control" name="alamat" style="height: 100px" placeholder="Alamat"></textarea>
-                        <label>Alamat Lengkap</label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="number" class="form-control" name="no_kontak" placeholder="HP">
-                        <label>Nomor Kontak (WA/HP)</label>
-                    </div>
-
-                    <hr>
+                    <div class="form-floating mb-3"><textarea class="form-control" name="alamat" style="height: 100px"></textarea><label>Alamat</label></div>
+                    <div class="form-floating mb-3"><input type="number" class="form-control" name="no_kontak"><label>Kontak</label></div>
                     <div class="row g-3 mb-3">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" name="nama_ayah" placeholder="Ayah">
-                                <label>Nama Ayah</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <select class="form-select" name="pek_ayah">
-                                    <option value="" selected>-- Pekerjaan Ayah --</option>
-                                    <option>PNS</option>
-                                    <option>TNI/Polri</option>
-                                    <option>Petani</option>
-                                    <option>Nelayan</option>
-                                    <option>Wiraswasta</option>
-                                    <option>Buruh</option>
-                                    <option>Lainnya</option>
-                                </select>
-                                <label>Pekerjaan Ayah</label>
-                            </div>
-                        </div>
+                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" name="nama_ayah"><label>Nama Ayah</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><select class="form-select" name="pek_ayah"><option>Wiraswasta</option><option>PNS</option><option>Petani</option><option>Lainnya</option></select><label>Pekerjaan Ayah</label></div></div>
                     </div>
-
                     <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" name="nama_ibu" placeholder="Ibu">
-                                <label>Nama Ibu</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <select class="form-select" name="pek_ibu">
-                                    <option value="" selected>-- Pekerjaan Ibu --</option>
-                                    <option>PNS</option>
-                                    <option>TNI/Polri</option>
-                                    <option>Petani</option>
-                                    <option>Nelayan</option>
-                                    <option>Wiraswasta</option>
-                                    <option>Ibu Rumah Tangga</option>
-                                    <option>Lainnya</option>
-                                </select>
-                                <label>Pekerjaan Ibu</label>
-                            </div>
-                        </div>
+                        <div class="col-md-6"><div class="form-floating"><input type="text" class="form-control" name="nama_ibu"><label>Nama Ibu</label></div></div>
+                        <div class="col-md-6"><div class="form-floating"><select class="form-select" name="pek_ibu"><option>IRT</option><option>PNS</option><option>Wiraswasta</option><option>Lainnya</option></select><label>Pekerjaan Ibu</label></div></div>
                     </div>
 
                     <div class="d-grid mt-3">
@@ -195,7 +117,7 @@
                     <table id="tabelSiswa" class="table table-hover table-striped align-middle" style="min-width: 1800px; width: 100%;">
                         <thead class="table-primary text-center">
                             <tr>
-                                <th>No</th>
+                                <th class="bg-danger text-white" style="width: 50px;">Aksi</th> <th>No</th>
                                 <th>Nama Siswa</th>
                                 <th>NIS</th>
                                 <th>NISN</th>
@@ -217,27 +139,6 @@
                 <div id="loadingSpinner" class="text-center py-5">
                     <div class="spinner-border text-primary" role="status"></div>
                     <p class="mt-2 text-muted">Sedang mengambil data...</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-pane fade" id="pills-delete">
-            <div class="glass-card p-5 text-center animate-enter delay-2 border-danger">
-                <div class="bg-danger text-white rounded-circle p-3 mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                    <i class="bi bi-trash3-fill fs-1"></i>
-                </div>
-                <h3 class="fw-bold text-danger">Hapus Data</h3>
-                <p class="text-muted mb-4">Masukan NIS siswa yang ingin dihapus permanen.</p>
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <div class="form-floating mb-3">
-                            <input type="number" class="form-control border-danger" id="deleteNIS" placeholder="NIS">
-                            <label>Nomor Induk Siswa (NIS)</label>
-                        </div>
-                        <button onclick="handleDelete()" class="btn btn-danger w-100 py-3 fw-bold shadow-sm" id="btnDelete">
-                            HAPUS PERMANEN
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
