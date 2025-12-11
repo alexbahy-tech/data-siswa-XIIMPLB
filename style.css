@@ -1,39 +1,49 @@
-/* Update style.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background: linear-gradient(-45deg, #0d6efd, #0099ff, #6610f2, #6f42c1);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    min-height: 100vh;
+    padding-bottom: 50px;
 }
+@keyframes gradientBG { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
 
-/* Tabel Header Rounded */
+.header-hero { text-align: center; color: white; padding: 60px 20px 80px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15); transition: transform 0.3s ease; }
+.glass-card:hover { transform: translateY(-5px); }
+
+.animate-enter { animation: fadeInUp 0.8s ease-out forwards; opacity: 0; transform: translateY(20px); }
+.delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.3s; } .delay-3 { animation-delay: 0.5s; }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+.form-floating > .form-control, .form-floating > .form-select { border-radius: 12px; border: 2px solid #eef2f7; background-color: #f8f9fa; }
+.form-floating > .form-control:focus, .form-floating > .form-select:focus { border-color: #6610f2; background-color: #fff; box-shadow: none; }
+
+.btn-gradient-primary { background-image: linear-gradient(to right, #0d6efd 0%, #6610f2 51%, #0d6efd 100%); background-size: 200% auto; color: white; border: none; border-radius: 12px; transition: 0.5s; font-weight: 600; }
+.btn-gradient-primary:hover { background-position: right center; color: #fff; transform: scale(1.02); }
+.btn-outline-custom { border: 2px solid #0d6efd; color: #0d6efd; border-radius: 12px; font-weight: 600; }
+.btn-outline-custom:hover { background-color: #0d6efd; color: white; }
+
+.bg-gradient-primary { background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%); }
 #tabelSiswa thead th:first-child { border-top-left-radius: 10px; }
 #tabelSiswa thead th:last-child { border-top-right-radius: 10px; }
-#tabelSiswa thead th {
-    background-color: #0d6efd;
-    color: white;
-    border: none;
-    padding: 15px;
-    font-weight: 600;
-}
+#tabelSiswa thead th { background-color: #0d6efd; color: white; border: none; padding: 15px; font-weight: 600; }
 
-/* Tombol Aksi */
-.btn-action {
-    width: 35px;
-    height: 35px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s;
-}
+.btn-action { width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; }
 .btn-action:hover { transform: scale(1.1); }
+.badge-nis { background-color: #e7f1ff; color: #0d6efd; font-size: 0.9em; padding: 5px 10px; border-radius: 8px; font-weight: 600; }
 
-/* Badge NIS */
-.badge-nis {
-    background-color: #e7f1ff;
-    color: #0d6efd;
-    font-size: 0.9em;
-    padding: 5px 10px;
-    border-radius: 8px;
-    font-weight: 600;
+/* RESPONSIF HP & FREEZE HEADER */
+@media (max-width: 768px) {
+    .header-hero { padding: 40px 20px 60px; }
+    .header-hero h1 { font-size: 1.8rem; }
+    .glass-card { padding: 15px !important; }
+    #tabelSiswa thead th, #tabelSiswa tbody td { font-size: 0.85rem; padding: 10px 5px; }
+    .btn-action { width: 28px; height: 28px; font-size: 0.8rem; }
 }
+div.dataTables_scrollHeadInner, div.dataTables_scrollHeadInner table { width: 100% !important; }
+.dataTables_scrollBody::-webkit-scrollbar { width: 6px; height: 6px; }
+.dataTables_scrollBody::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
